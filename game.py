@@ -1,5 +1,6 @@
 import pygame, sys, turtle
 from player import Player
+from ball import Ball
 
 pygame.init()
 
@@ -16,9 +17,9 @@ pygame.display.set_caption('Pong!')
 
 running = True
 
-ball = pygame.Rect((SCREEN_WIDTH - 10) / 2, (SCREEN_HEIGHT - 10) / 2, 20, 20)
-player_1 = pygame.Rect(15, (SCREEN_HEIGHT - 50) / 2, 20, 100)
-player_2 = pygame.Rect(SCREEN_WIDTH - 35, (SCREEN_HEIGHT - 50) / 2, 20, 100)
+ball = Ball((SCREEN_WIDTH - Ball.size) // 2, (SCREEN_HEIGHT - Ball.size) // 2, RESOLUTION)
+player_1 = Player(2 * Player.size_x, (SCREEN_HEIGHT - Player.size_y) // 2, RESOLUTION)
+player_2 = Player(SCREEN_WIDTH - Player.size_x * 3 , (SCREEN_HEIGHT - Player.size_y) // 2, RESOLUTION)
 
 while running:
     for event in pygame.event.get():
@@ -34,10 +35,23 @@ while running:
         pygame.quit()
         sys.exit(0)
 
+    if pressed[pygame.K_UP]:
+        player_2.move_up()
+    if pressed[pygame.K_DOWN]:
+        player_2.move_down()
+
+    if pressed[pygame.K_w]:
+        player_1.move_up()
+    if pressed[pygame.K_s]:
+        player_1.move_down()
+
     screen.fill((0, 0, 0))
     pygame.draw.ellipse(screen, (255, 255, 255), ball)
     pygame.draw.rect(screen, (255, 255, 255), player_1)
     pygame.draw.rect(screen, (255, 255, 255), player_2)
+    ball.move()
+    ball.check_position()
+    ball.check_collision(player_1, player_2)
 
     pygame.display.flip()
     clock.tick(FPS)
